@@ -1,9 +1,9 @@
 # mileio
 An android app to track distance on trips to split gas bills.
 
-![Proposal wireframes](mileIO-proposal.jpg)
-
 #### Philip Seger, Bill Du, Danny Wolf
+
+![Proposal wireframes](mileIO-proposal.jpg)
 
 ## App Proposal
 Main idea is to build an app to track gas usage for people who share a car. This means that User 1 can log in, drive somewhere while the app is tracking where they are going, then stop tracking once they are done. When User 2 logs in and drives somewhere, their trip is tracked. If they stop off at the gas station and fill the tank, they can figure out how much the other users owe and can be reimbursed according to how much gas costs.
