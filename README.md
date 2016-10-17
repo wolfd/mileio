@@ -1,6 +1,8 @@
 # mileio
 An android app to track distance on trips to split gas bills.
 
+![Proposal wireframes](mileIO-proposal.jpg)
+
 #### Philip Seger, Bill Du, Danny Wolf
 
 ## App Proposal
