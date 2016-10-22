@@ -1,22 +1,24 @@
 package io.mile.mileio;
 
-import android.content.DialogInterface;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.EditText;
-import android.widget.Toast;
-
-import java.util.Date;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
+    public static final int MAP_NOTIFICATION_ID = 11;
+    public static float distance;
+
+    NotificationCompat.Builder mBuilder;
+    NotificationManager mNotificationManager;
 
     public MainActivityFragment() {
     }
@@ -28,25 +30,30 @@ public class MainActivityFragment extends Fragment {
     }
 
     public void startTracking() {
-        final EditText input = new EditText(getContext());
-        // set focus and popup keyboard
-        input.setSelectAllOnFocus(true);
+        // TODO remove testing distance value
+        distance = 5;
 
-        AlertDialog.Builder alert = new AlertDialog.Builder(getContext())
-                .setTitle(R.string.start_trip_title)
-                .setView(input)
-                .setCancelable(true)
-                .setPositiveButton(R.string.start_trip_confirm, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Toast toast = Toast.makeText(getContext(), input.getText().toString(), Toast.LENGTH_SHORT);
-                        toast.show();
-                    }
-                });
+        // build notification
+        mBuilder = new NotificationCompat.Builder(getContext())
+                .setSmallIcon(R.drawable.ic_we_going_now_24dp)
+                .setContentTitle("Trip in progress")
+                .setContentText("Distance: " + distance)
+                .setOngoing(true);
+        // TODO setContentIntent can make notification cancellable on click
+//                .setContentIntent();
+        mNotificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
 
-        AlertDialog visibleAlert = alert.create();
-        // popup the soft keyboard when the alert dialog opens, close when alert dialog closes
-        visibleAlert.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        visibleAlert.show();
+        mNotificationManager.notify(MAP_NOTIFICATION_ID, mBuilder.build());
+
+        // start tracking
+        getActivity().startService(new Intent(getActivity(), TrackingService.class));
+
+        // TODO remember to cancel notification on click somehow
+//        mNotificationManager.cancel(MAP_NOTIFICATION_ID);
+    }
+
+    // TODO implement permission check and verify for newer android versions
+    public void checkPermissions() {
+
     }
 }
