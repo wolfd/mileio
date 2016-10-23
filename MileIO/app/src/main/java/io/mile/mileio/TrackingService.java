@@ -19,6 +19,7 @@ import android.util.Log;
  */
 public class TrackingService extends Service {
     private static final String TAG = "TESTGPS";
+    final static String TRACKING = "TRACKING";
     private LocationManager mLocationManager = null;
     private static final int LOCATION_INTERVAL = 10000; //1000
     private static final float LOCATION_DISTANCE = 0; // 10f
@@ -27,29 +28,29 @@ public class TrackingService extends Service {
         Location mLastLocation;
 
         public LocationListener(String provider) {
-            Log.e(TAG, "LocationListener " + provider);
+            Log.d(TAG, "LocationListener " + provider);
             mLastLocation = new Location(provider);
         }
 
         @Override
         public void onLocationChanged(Location location) {
-            Log.e(TAG, "onLocationChanged: " + location);
+            Log.d(TAG, "onLocationChanged: " + location);
             mLastLocation.set(location);
         }
 
         @Override
         public void onProviderDisabled(String provider) {
-            Log.e(TAG, "onProviderDisabled: " + provider);
+            Log.d(TAG, "onProviderDisabled: " + provider);
         }
 
         @Override
         public void onProviderEnabled(String provider) {
-            Log.e(TAG, "onProviderEnabled: " + provider);
+            Log.d(TAG, "onProviderEnabled: " + provider);
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-            Log.e(TAG, "onStatusChanged: " + provider);
+            Log.d(TAG, "onStatusChanged: " + provider);
         }
     }
 
@@ -65,14 +66,14 @@ public class TrackingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e(TAG, "onStartCommand");
+        Log.d(TAG, "onStartCommand");
         super.onStartCommand(intent, flags, startId);
         return START_STICKY;
     }
 
     @Override
     public void onCreate() {
-        Log.e(TAG, "onCreate");
+        Log.d(TAG, "onCreate");
         initializeLocationManager();
         try {
             mLocationManager.requestLocationUpdates(
@@ -96,7 +97,7 @@ public class TrackingService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.e(TAG, "onDestroy");
+        Log.d(TAG, "onDestroy");
         super.onDestroy();
         if (mLocationManager != null) {
             for (int i = 0; i < mLocationListeners.length; i++) {
@@ -120,7 +121,7 @@ public class TrackingService extends Service {
     }
 
     private void initializeLocationManager() {
-        Log.e(TAG, "initializeLocationManager");
+        Log.d(TAG, "initializeLocationManager");
         if (mLocationManager == null) {
             mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }

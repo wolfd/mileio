@@ -3,9 +3,11 @@ package io.mile.mileio;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,7 @@ public class MainActivityFragment extends Fragment {
 
     NotificationCompat.Builder mBuilder;
     NotificationManager mNotificationManager;
+    MessageReceiver mReceiver;
 
     public MainActivityFragment() {
     }
@@ -45,11 +48,22 @@ public class MainActivityFragment extends Fragment {
 
         mNotificationManager.notify(MAP_NOTIFICATION_ID, mBuilder.build());
 
-        // start tracking
-        getActivity().startService(new Intent(getActivity(), TrackingService.class));
+        // start tracking message receiver
+        mReceiver = new MessageReceiver();
+        IntentFilter serviceFilter = new IntentFilter();
+        serviceFilter.addAction(TrackingService.TRACKING);
+        getActivity().registerReceiver(mReceiver, serviceFilter);
 
-        // TODO remember to cancel notification on click somehow
-//        mNotificationManager.cancel(MAP_NOTIFICATION_ID);
+        // start tracking service
+        getActivity().startService(new Intent(getActivity(), TrackingService.class));
+    }
+
+    @Override
+    public void onStop() {
+        Log.d("FRAGMENT", "on stop?");
+        getActivity().unregisterReceiver(mReceiver);
+        mNotificationManager.cancel(MAP_NOTIFICATION_ID);
+        super.onStop();
     }
 
     // TODO implement permission check and verify for newer android versions
