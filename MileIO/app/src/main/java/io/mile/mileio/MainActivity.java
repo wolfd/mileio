@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -61,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
                 email = firebaseUser.getEmail();
             }
         }
+
+        MapsInitializer.initialize(this);
     }
 
     @Override
