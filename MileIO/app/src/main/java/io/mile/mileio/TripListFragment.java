@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class TripListFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
@@ -42,7 +43,14 @@ public class TripListFragment extends Fragment {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        trips.add(new Trip(user, 10));
+        trips.add(new Trip(user, 10, new Date()));
+        trips.add(new Trip(user, 5.4, new Date()));
+        trips.add(new Trip(user, 25.8, new Date()));
+        trips.add(new Trip(user, 25.8, new Date()));
+        trips.add(new Trip(user, 25.8, new Date()));
+        trips.add(new Trip(user, 25.8, new Date()));
+        trips.add(new Trip(user, 25.8, new Date()));
+        trips.add(new Trip(user, 25.8, new Date()));
     }
 
     @Override
