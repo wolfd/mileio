@@ -1,9 +1,9 @@
 package io.mile.mileio;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -36,23 +36,26 @@ public class MainActivityFragment extends Fragment {
         // TODO remove testing distance value
         distance = 5;
 
+        // pending intent for ending trip
+        PendingIntent pendingIntentDone = PendingIntent.getActivity(getContext(), 0,
+                new Intent(getContext(), EndTripActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+
         // build notification
         mBuilder = new NotificationCompat.Builder(getContext())
                 .setSmallIcon(R.drawable.ic_we_going_now_24dp)
                 .setContentTitle("Trip in progress")
                 .setContentText("Distance: " + distance)
-                .setOngoing(true);
-        // TODO setContentIntent can make notification cancellable on click
-//                .setContentIntent();
+                .setOngoing(true)
+                .setContentIntent(pendingIntentDone);
         mNotificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
 
         mNotificationManager.notify(MAP_NOTIFICATION_ID, mBuilder.build());
 
         // start tracking message receiver
-        mReceiver = new MessageReceiver();
-        IntentFilter serviceFilter = new IntentFilter();
-        serviceFilter.addAction(TrackingService.TRACKING);
-        getActivity().registerReceiver(mReceiver, serviceFilter);
+//        mReceiver = new MessageReceiver();
+//        IntentFilter serviceFilter = new IntentFilter();
+//        serviceFilter.addAction(TrackingService.TRACKING);
+//        getActivity().registerReceiver(mReceiver, serviceFilter);
 
         // start tracking service
         getActivity().startService(new Intent(getActivity(), TrackingService.class));
@@ -61,8 +64,8 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onStop() {
         Log.d("FRAGMENT", "on stop?");
-        getActivity().unregisterReceiver(mReceiver);
-        mNotificationManager.cancel(MAP_NOTIFICATION_ID);
+//        getActivity().unregisterReceiver(mReceiver);
+//        mNotificationManager.cancel(MAP_NOTIFICATION_ID);
         super.onStop();
     }
 

@@ -68,7 +68,12 @@ public class TrackingService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand");
         super.onStartCommand(intent, flags, startId);
+        updateNotification();
         return START_STICKY;
+    }
+
+    private void updateNotification() {
+
     }
 
     @Override
