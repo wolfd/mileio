@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -43,14 +44,14 @@ public class TripListFragment extends Fragment {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        trips.add(new Trip(user, 10, new Date()));
-        trips.add(new Trip(user, 5.4, new Date()));
-        trips.add(new Trip(user, 25.8, new Date()));
-        trips.add(new Trip(user, 25.8, new Date()));
-        trips.add(new Trip(user, 25.8, new Date()));
-        trips.add(new Trip(user, 25.8, new Date()));
-        trips.add(new Trip(user, 25.8, new Date()));
-        trips.add(new Trip(user, 25.8, new Date()));
+        trips.add(new Trip(user, 10, new Date(), new ArrayList<LatLng>()));
+        trips.add(new Trip(user, 5.4, new Date(), new ArrayList<LatLng>()));
+        trips.add(new Trip(user, 25.8, new Date(), new ArrayList<LatLng>()));
+        trips.add(new Trip(user, 25.8, new Date(), new ArrayList<LatLng>()));
+        trips.add(new Trip(user, 25.8, new Date(), new ArrayList<LatLng>()));
+        trips.add(new Trip(user, 25.8, new Date(), new ArrayList<LatLng>()));
+        trips.add(new Trip(user, 25.8, new Date(), new ArrayList<LatLng>()));
+        trips.add(new Trip(user, 25.8, new Date(), new ArrayList<LatLng>()));
     }
 
     @Override
