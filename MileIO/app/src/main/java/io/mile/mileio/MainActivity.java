@@ -1,10 +1,15 @@
 package io.mile.mileio;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -23,11 +28,17 @@ import com.google.firebase.auth.FirebaseUser;
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 
 public class MainActivity extends AppCompatActivity {
+    public static final int MAP_NOTIFICATION_ID = 11;
+    public static float distance;
 
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
     private String username;
     private String email;
+
+    NotificationCompat.Builder mBuilder;
+    NotificationManager mNotificationManager;
+    MessageReceiver mReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +51,9 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                // TODO implement permission check/get
+                checkPermissions();
+                startTracking();
             }
         });
 
@@ -64,6 +76,39 @@ public class MainActivity extends AppCompatActivity {
         }
 
         MapsInitializer.initialize(this);
+    }
+
+    // TODO implement permissions check
+    private void checkPermissions() {
+    }
+
+    private void startTracking() {
+        // TODO remove testing distance value
+        distance = 5;
+
+        // pending intent for ending trip
+        PendingIntent pendingIntentDone = PendingIntent.getActivity(this, 0,
+                new Intent(this, EndTripActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+
+        // build notification
+        mBuilder = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_we_going_now_24dp)
+                .setContentTitle("Trip in progress")
+                .setContentText("Distance: " + distance)
+                .setOngoing(true)
+                .setContentIntent(pendingIntentDone);
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        mNotificationManager.notify(MAP_NOTIFICATION_ID, mBuilder.build());
+
+        // start tracking message receiver
+//        mReceiver = new MessageReceiver();
+//        IntentFilter serviceFilter = new IntentFilter();
+//        serviceFilter.addAction(TrackingService.TRACKING);
+//        getActivity().registerReceiver(mReceiver, serviceFilter);
+
+        // start tracking service
+        startService(new Intent(this, TrackingService.class));
     }
 
     @Override
