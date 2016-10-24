@@ -16,7 +16,7 @@ public class EndTripActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.cancel(MainActivityFragment.MAP_NOTIFICATION_ID);
+        mNotificationManager.cancel(MainActivity.MAP_NOTIFICATION_ID);
 
         stopService(new Intent(this, TrackingService.class));
     }
