@@ -48,10 +48,9 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivityFragment fragment = (MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
                 // TODO implement permission check/get
-                fragment.checkPermissions();
-                fragment.startTracking();
+                checkPermissions();
+                startTracking();
             }
         });
 
