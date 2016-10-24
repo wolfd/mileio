@@ -7,11 +7,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         // Initialize Firebase Auth
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
@@ -60,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
                 email = firebaseUser.getEmail();
             }
         }
+
+        MapsInitializer.initialize(this);
     }
 
     @Override
