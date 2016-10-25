@@ -19,7 +19,8 @@ import android.util.Log;
  */
 public class TrackingService extends Service {
     private static final String TAG = "TESTGPS";
-    final static String TRACKING = "TRACKING";
+    // TODO private or public
+    static final String TRACKING = "TRACKING";
     private LocationManager mLocationManager = null;
     private static final int LOCATION_INTERVAL = 10000; //1000
     private static final float LOCATION_DISTANCE = 0; // 10f
@@ -35,6 +36,12 @@ public class TrackingService extends Service {
         @Override
         public void onLocationChanged(Location location) {
             Log.d(TAG, "onLocationChanged: " + location);
+
+            // broadcast new location to activity
+            Intent intent = new Intent();
+            intent.setAction(TRACKING);
+            sendBroadcast(intent);
+
             mLastLocation.set(location);
         }
 
