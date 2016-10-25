@@ -26,8 +26,7 @@ public class Trip {
     }
 
     public double getDistance() {
-
-        return distance;
+        return 0;
     }
 
     public Date getWhen() {

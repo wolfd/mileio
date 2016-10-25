@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 
 /**
  * Ends the trip, removes the ongoing notification, and stops the service
+ * then saves the data
  */
 
 public class EndTripActivity extends AppCompatActivity {
@@ -19,6 +20,11 @@ public class EndTripActivity extends AppCompatActivity {
         mNotificationManager.cancel(MainActivity.MAP_NOTIFICATION_ID);
 
         stopService(new Intent(this, TrackingService.class));
+
+    }
+
+    private void saveTrip() {
+
     }
 
     // TODO flesh out this activity to have all end activity information/layout
