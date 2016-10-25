@@ -11,6 +11,8 @@ import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import static io.mile.mileio.MainActivity.LOCATION;
+
 /**
  * Tracking service for GPS updates, saved in arraylist
  *
@@ -40,6 +42,7 @@ public class TrackingService extends Service {
             // broadcast new location to activity
             Intent intent = new Intent();
             intent.setAction(TRACKING);
+            intent.putExtra(LOCATION, location);
             sendBroadcast(intent);
 
             mLastLocation.set(location);

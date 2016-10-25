@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -30,6 +31,7 @@ import static io.mile.mileio.TrackingService.TRACKING;
 public class MainActivity extends AppCompatActivity {
     public static final int MAP_NOTIFICATION_ID = 11;
     public static float distance;
+    public static final String LOCATION = "Location";
 
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
@@ -55,7 +57,8 @@ public class MainActivity extends AppCompatActivity {
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Toast.makeText(context, "MESSAGE HERE ", Toast.LENGTH_SHORT).show();
+                Location loc = intent.getParcelableExtra(LOCATION);
+                Toast.makeText(context, "MESSAGE HERE " + loc.getLatitude(), Toast.LENGTH_SHORT).show();
             }
         };
 
