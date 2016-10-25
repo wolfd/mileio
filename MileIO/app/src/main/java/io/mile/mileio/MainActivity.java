@@ -127,6 +127,11 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            SettingsFragment newFragment = new SettingsFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment, newFragment, "settingsFragment");
+            transaction.addToBackStack(null);
+            transaction.commit();
             return true;
         } else if(id == R.id.action_sign_out) {
             AuthUI.getInstance()
