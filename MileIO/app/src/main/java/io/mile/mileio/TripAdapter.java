@@ -2,6 +2,7 @@ package io.mile.mileio;
 
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,9 +46,13 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
                 String.format(Locale.US, "%.1f miles", trip.getDistance())
         );
 
-        holder.operatorNameView.setText(
-                trip.getDriver().getDisplayName()
-        );
+        try {
+            holder.operatorNameView.setText(
+                    trip.getDriver().getDisplayName()
+            );
+        } catch (NullPointerException exc) {
+            // no user logged in yet
+        }
 
         holder.whenView.setText(
                 whenFormat.format(trip.getWhen())

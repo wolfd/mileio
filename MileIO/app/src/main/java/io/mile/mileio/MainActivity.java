@@ -6,11 +6,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -25,13 +29,19 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.ArrayList;
+
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 import static io.mile.mileio.TrackingService.TRACKING;
 
 public class MainActivity extends AppCompatActivity {
     public static final int MAP_NOTIFICATION_ID = 11;
-    public static float distance;
     public static final String LOCATION = "Location";
+    public static float distance;
+
+    // permission constants
+    private static final String FINE_LOCATION = "android.permission.ACCESS_COARSE_LOCATION";
+    private final int grantedFine = 0;
 
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
@@ -44,12 +54,18 @@ public class MainActivity extends AppCompatActivity {
     private NotificationCompat.Builder mBuilder;
     private NotificationManager mNotificationManager;
 
+    private ArrayList<Location> locations;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // set up arraylist to hold all the location updates and distance at 0
+        locations = new ArrayList<>();
+        distance = 0;
 
         // set up message receiver from service
         filter = new IntentFilter();
@@ -58,7 +74,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Location loc = intent.getParcelableExtra(LOCATION);
-                Toast.makeText(context, "MESSAGE HERE " + loc.getLatitude(), Toast.LENGTH_SHORT).show();
+                if (!locations.isEmpty()) {
+                    distance += loc.distanceTo(locations.get(locations.size() - 1));
+                }
+                locations.add(loc);
+
+                mBuilder.setContentText("Distance " + distance);
+                mNotificationManager.notify(MAP_NOTIFICATION_ID, mBuilder.build());
+
+                Toast.makeText(context, "MESSAGE HERE " + distance, Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -66,9 +90,8 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO implement permission check/get
+                // get permission access, then start tracking
                 checkPermissions();
-                startTracking();
             }
         });
 
@@ -93,14 +116,30 @@ public class MainActivity extends AppCompatActivity {
         MapsInitializer.initialize(this);
     }
 
-    // TODO implement permissions check
+    // get and check permission
+    // only need to request fine, because we get both with it
     private void checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this, FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{FINE_LOCATION}, grantedFine);
+        }
+    }
+
+    // verify we got location access, start tracking
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case grantedFine: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startTracking();
+                } else {
+                    Toast.makeText(this, "Location needed for app to function", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 
     private void startTracking() {
-        // TODO remove testing distance value
-        distance = 5;
-
         // pending intent for ending trip
         PendingIntent pendingIntentDone = PendingIntent.getActivity(this, 0,
                 new Intent(this, EndTripActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
