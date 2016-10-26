@@ -15,6 +15,8 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 import java.util.Date;
 
+import io.mile.mileio.types.Trip;
+
 public class TripListFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView tripRecyclerView;

@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Random;
 
+import io.mile.mileio.types.Trip;
+
 public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
     private static final SimpleDateFormat whenFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
     private final ArrayList<Trip> trips;

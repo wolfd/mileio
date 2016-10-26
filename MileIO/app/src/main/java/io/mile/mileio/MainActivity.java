@@ -41,12 +41,9 @@ import static io.mile.mileio.TrackingService.TRACKING;
 
 public class MainActivity extends AppCompatActivity {
     public static final int MAP_NOTIFICATION_ID = 11;
-    public static final String LOCATION = "Location";
     private static final String TAG = "MainActivity";
-    public static float distance;
 
     // permission constants
-    private static final String FINE_LOCATION = "android.permission.ACCESS_COARSE_LOCATION";
     private final int GRANTED_FINE = 0;
 
     private FirebaseAuth firebaseAuth;
@@ -54,35 +51,12 @@ public class MainActivity extends AppCompatActivity {
     private String username;
     private String email;
 
-    private BroadcastReceiver receiver;
-    private IntentFilter filter;
-
-    private ArrayList<Location> locations;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        // set up arraylist to hold all the location updates and distance at 0
-        locations = new ArrayList<>();
-        distance = 0;
-
-        // set up message receiver from service
-        filter = new IntentFilter();
-        filter.addAction(TRACKING);
-        receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Location loc = intent.getParcelableExtra(LOCATION);
-                if (!locations.isEmpty()) {
-                    distance += loc.distanceTo(locations.get(locations.size() - 1));
-                }
-                locations.add(loc);
-            }
-        };
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -150,9 +124,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startTracking() {
-        // start tracking message receiver
-        registerReceiver(receiver, filter);
-
         // start tracking service
         Log.d(TAG, "Starting TrackingService");
         startService(new Intent(this, TrackingService.class));
@@ -189,15 +160,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    // unregister message receiver
-    @Override
-    protected void onDestroy() {
-        if (receiver != null) {
-            unregisterReceiver(receiver);
-            receiver = null;
-        }
-        super.onDestroy();
     }
 }
