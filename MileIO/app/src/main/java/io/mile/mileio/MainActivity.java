@@ -5,18 +5,21 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,17 +34,20 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 import static io.mile.mileio.TrackingService.TRACKING;
 
 public class MainActivity extends AppCompatActivity {
     public static final int MAP_NOTIFICATION_ID = 11;
     public static final String LOCATION = "Location";
+    private static final String TAG = "MainActivity";
     public static float distance;
 
     // permission constants
     private static final String FINE_LOCATION = "android.permission.ACCESS_COARSE_LOCATION";
-    private final int grantedFine = 0;
+    private final int GRANTED_FINE = 0;
 
     private FirebaseAuth firebaseAuth;
     private FirebaseUser firebaseUser;
@@ -50,9 +56,6 @@ public class MainActivity extends AppCompatActivity {
 
     private BroadcastReceiver receiver;
     private IntentFilter filter;
-
-    private NotificationCompat.Builder mBuilder;
-    private NotificationManager mNotificationManager;
 
     private ArrayList<Location> locations;
 
@@ -78,11 +81,6 @@ public class MainActivity extends AppCompatActivity {
                     distance += loc.distanceTo(locations.get(locations.size() - 1));
                 }
                 locations.add(loc);
-
-                mBuilder.setContentText("Distance " + distance);
-                mNotificationManager.notify(MAP_NOTIFICATION_ID, mBuilder.build());
-
-                Toast.makeText(context, "MESSAGE HERE " + distance, Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -116,19 +114,11 @@ public class MainActivity extends AppCompatActivity {
         MapsInitializer.initialize(this);
     }
 
-    // get and check permission
-    // only need to request fine, because we get both with it
-    private void checkPermissions() {
-        if (ContextCompat.checkSelfPermission(this, FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{FINE_LOCATION}, grantedFine);
-        }
-    }
-
     // verify we got location access, start tracking
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case grantedFine: {
+            case GRANTED_FINE: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     startTracking();
@@ -139,26 +129,32 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private boolean checkPermissions() {
+        boolean hasFineLocation = ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED;
+        boolean hasCoarseLocation = ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED;
+
+        if (!hasFineLocation || !hasCoarseLocation) {
+            return requestPermissions();
+        } else {
+            return true;
+        }
+    }
+
+    private boolean requestPermissions() {
+        ActivityCompat.requestPermissions(this, new String[]{ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION}, GRANTED_FINE);
+
+        boolean hasCoarseLocation = ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED;
+        boolean hasFineLocation = ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED;
+
+        return hasCoarseLocation && hasFineLocation;
+    }
+
     private void startTracking() {
-        // pending intent for ending trip
-        PendingIntent pendingIntentDone = PendingIntent.getActivity(this, 0,
-                new Intent(this, EndTripActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
-
-        // build notification
-        mBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_we_going_now_24dp)
-                .setContentTitle("Trip in progress")
-                .setContentText("Distance: " + distance)
-                .setOngoing(true)
-                .setContentIntent(pendingIntentDone);
-        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        mNotificationManager.notify(MAP_NOTIFICATION_ID, mBuilder.build());
-
         // start tracking message receiver
         registerReceiver(receiver, filter);
 
         // start tracking service
+        Log.d(TAG, "Starting TrackingService");
         startService(new Intent(this, TrackingService.class));
     }
 

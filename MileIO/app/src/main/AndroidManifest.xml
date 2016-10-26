@@ -22,9 +22,13 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".TrackingService" />
-
         <activity android:name=".EndTripActivity" />
+
+        <service android:name=".TrackingService" android:enabled="true" android:exported="true">
+            <intent-filter>
+                <action android:name=".TrackingService" />
+            </intent-filter>
+        </service>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
