@@ -1,7 +1,9 @@
-package io.mile.mileio;
+package io.mile.mileio.data;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import io.mile.mileio.types.Trip;
 
 /**
  * An interface for writing data to Firebase.
@@ -19,7 +21,7 @@ public class FirebaseHandler {
         DatabaseReference newTripRef = mDatabase
                 .child("trips")
                 .child(trip.getDriver().getUid())
-                .child(String.valueOf(trip.getWhen().getTime()));
+                .child(String.valueOf(trip.getWhenStarted().getTime()));
 
         newTripRef.setValue(trip);
     }
