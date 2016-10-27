@@ -1,5 +1,7 @@
 package io.mile.mileio;
 
+import android.*;
+import android.Manifest;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -34,7 +36,7 @@ public class TrackingService extends Service {
 
     private LocationManager mLocationManager = null;
     private static final int LOCATION_INTERVAL = 10000; //1000
-    private static final float LOCATION_DISTANCE = 0; // 10f
+    private static final double LOCATION_DISTANCE = 0; // 10f
 
     private NotificationManager mNotificationManager;
     private NotificationCompat.Builder mBuilder;
@@ -144,7 +146,7 @@ public class TrackingService extends Service {
 
         try {
             mLocationManager.requestLocationUpdates(
-                    LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                    LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, (float) LOCATION_DISTANCE,
                     mLocationListeners[1]);
         } catch (java.lang.SecurityException ex) {
             Log.i(TAG, "fail to request location update, ignore", ex);
@@ -153,7 +155,7 @@ public class TrackingService extends Service {
         }
         try {
             mLocationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                    LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, (float) LOCATION_DISTANCE,
                     mLocationListeners[0]);
         } catch (java.lang.SecurityException ex) {
             Log.i(TAG, "fail to request location update, ignore", ex);
@@ -174,20 +176,20 @@ public class TrackingService extends Service {
         Intent intent = new Intent();
         intent.setAction(TRACKING);
         intent.putExtra(LOCATION, mTripLocations);
-        intent.putExtra(DISTANCE, mDistanceMeters * METERS_TO_MILES);
+        intent.putExtra(DISTANCE, mDistanceMeters);
         sendBroadcast(intent);
 
         super.onDestroy();
         if (mLocationManager != null) {
-            for (int i = 0; i < mLocationListeners.length; i++) {
+            for (LocationListener mLocationListener : mLocationListeners) {
                 try {
-                    if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         return;
                     }
-                    if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         return;
                     }
-                    mLocationManager.removeUpdates(mLocationListeners[i]);
+                    mLocationManager.removeUpdates(mLocationListener);
                 } catch (Exception ex) {
                     Log.i(TAG, "fail to remove location listners, ignore", ex);
                 }

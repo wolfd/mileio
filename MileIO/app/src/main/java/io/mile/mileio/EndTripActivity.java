@@ -20,10 +20,10 @@ import static io.mile.mileio.TrackingService.TRACKING;
  */
 
 public class EndTripActivity extends AppCompatActivity {
-    public static final String LOCATION = "ArrayList<Location>";
-    public static final String DISTANCE = "float";
+    public static final String LOCATION = "ARG_LOCATION";
+    public static final String DISTANCE = "ARG_DISTANCE";
 
-    public static float distance;
+    public static double distance;
 
     private ArrayList<Location> locations;
     private BroadcastReceiver receiver;
@@ -47,9 +47,9 @@ public class EndTripActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 locations = intent.getParcelableArrayListExtra(LOCATION);
-                distance = intent.getFloatExtra(DISTANCE, 0);
+                distance = intent.getDoubleExtra(DISTANCE, 0);
 
-                Toast.makeText(context, "distance " + distance, Toast.LENGTH_SHORT);
+                Toast.makeText(context, "distance " + distance, Toast.LENGTH_SHORT).show();
             }
         };
 
