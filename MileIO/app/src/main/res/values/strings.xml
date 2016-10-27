@@ -5,4 +5,13 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="email">Email</string>
+    <string name="enter_your_login_email">Enter your login email</string>
+    <string name="password">Password</string>
+    <string name="enter_your_password">Enter your password</string>
+    <string name="login">login</string>
+    <string name="owes">owes</string>
+    <string name="gas_cost">Gas Cost:</string>
+    <string name="amount_filled">Amount Filled</string>
 </resources>
