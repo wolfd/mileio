@@ -11,5 +11,5 @@
         android:layout_height="match_parent"
         tools:listitem="@layout/item_trip"
         android:scrollbars="vertical"
-        android:id="@+id/trip_recycler_view" />
+        android:uid="@+uid/trip_recycler_view" />
 </FrameLayout>

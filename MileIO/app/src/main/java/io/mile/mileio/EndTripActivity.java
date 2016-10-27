@@ -12,7 +12,10 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import io.mile.mileio.types.Trip;
+
 import static io.mile.mileio.TrackingService.TRACKING;
+import static io.mile.mileio.TrackingService.TRIP;
 
 /**
  * Ends the trip, removes the ongoing notification, and stops the service
@@ -28,6 +31,7 @@ public class EndTripActivity extends AppCompatActivity {
     private ArrayList<Location> locations;
     private BroadcastReceiver receiver;
     private IntentFilter filter;
+    private Trip trip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +50,9 @@ public class EndTripActivity extends AppCompatActivity {
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                locations = intent.getParcelableArrayListExtra(LOCATION);
-                distance = intent.getDoubleExtra(DISTANCE, 0);
+                trip = intent.getParcelableExtra(TRIP);
 
-                Toast.makeText(context, "distance " + distance, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "distance " + trip.getDistance(), Toast.LENGTH_SHORT).show();
             }
         };
 

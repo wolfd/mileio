@@ -1,6 +1,5 @@
 package io.mile.mileio;
 
-import android.*;
 import android.Manifest;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -16,11 +15,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import static io.mile.mileio.EndTripActivity.DISTANCE;
 import static io.mile.mileio.EndTripActivity.LOCATION;
 
-import java.util.ArrayList;
+import io.mile.mileio.types.Car;
+import io.mile.mileio.types.TripBuilder;
 
+import static io.mile.mileio.MainActivity.CAR;
 import static io.mile.mileio.MainActivity.MAP_NOTIFICATION_ID;
 
 /**
@@ -33,16 +36,16 @@ public class TrackingService extends Service {
     private static final String TAG = "TESTGPS";
     static final String TRACKING = "TRACKING";
     private static final double METERS_TO_MILES = 0.000621371d;
+    public static final String TRIP = "ARG_TRIP";
 
     private LocationManager mLocationManager = null;
     private static final int LOCATION_INTERVAL = 10000; //1000
     private static final double LOCATION_DISTANCE = 0; // 10f
 
     private NotificationManager mNotificationManager;
-    private NotificationCompat.Builder mBuilder;
+    private NotificationCompat.Builder mNotificationBuilder;
 
-    private ArrayList<Location> mTripLocations;
-    private float mDistanceMeters;
+    private TripBuilder mTripBuilder;
 
     private class LocationListener implements android.location.LocationListener {
         Location mLastLocation;
@@ -56,14 +59,7 @@ public class TrackingService extends Service {
         public void onLocationChanged(Location location) {
             Log.d(TAG, "onLocationChanged: " + location);
 
-            if (mTripLocations.size() >= 1) {
-                mDistanceMeters += location.distanceTo(
-                        mTripLocations.get(mTripLocations.size() - 1)
-                );
-            }
-
-            mLastLocation.set(location);
-            mTripLocations.add(location);
+            mTripBuilder.addLocation(location);
 
             updateNotification();
         }
@@ -96,8 +92,12 @@ public class TrackingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        mTripLocations = new ArrayList<>();
-        mDistanceMeters = 0;
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+
+        mTripBuilder = TripBuilder.startTrip(
+                firebaseAuth.getCurrentUser(),
+                (Car) intent.getParcelableExtra(CAR)
+        );
 
         Log.d(TAG, "onStartCommand");
         super.onStartCommand(intent, flags, startId);
@@ -111,30 +111,30 @@ public class TrackingService extends Service {
                 new Intent(this, EndTripActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         // build notification
-        mBuilder = new NotificationCompat.Builder(getBaseContext())
+        mNotificationBuilder = new NotificationCompat.Builder(getBaseContext())
                 .setSmallIcon(R.drawable.ic_we_going_now_24dp)
                 .setContentTitle("Trip in progress")
                 .setContentText("Not yet tracking")
                 .setOngoing(true)
                 .setContentIntent(pendingIntentDone);
 
-        mNotificationManager.notify(MAP_NOTIFICATION_ID, mBuilder.build());
+        mNotificationManager.notify(MAP_NOTIFICATION_ID, mNotificationBuilder.build());
     }
 
     private void updateNotification() {
-        if (mBuilder == null) {
+        if (mNotificationBuilder == null) {
             return;
         }
 
-        if (mTripLocations.size() == 0) {
+        if (mTripBuilder == null) {
             return;
         }
 
-        mBuilder.setContentText(
-                String.format("Distanced traveled: %.2f miles", mDistanceMeters * METERS_TO_MILES)
+        mNotificationBuilder.setContentText(
+                String.format("Distanced traveled: %.2f miles", mTripBuilder.getDistance() * METERS_TO_MILES)
         );
 
-        mNotificationManager.notify(MAP_NOTIFICATION_ID, mBuilder.build());
+        mNotificationManager.notify(MAP_NOTIFICATION_ID, mNotificationBuilder.build());
     }
 
     @Override
@@ -172,11 +172,14 @@ public class TrackingService extends Service {
     public void onDestroy() {
         Log.d(TAG, "onDestroy");
 
+        mTripBuilder.save();
+
         // send the locations list to EndTripActivity
         Intent intent = new Intent();
         intent.setAction(TRACKING);
-        intent.putExtra(LOCATION, mTripLocations);
-        intent.putExtra(DISTANCE, mDistanceMeters);
+
+        intent.putExtra(TRIP, mTripBuilder.build());
+
         sendBroadcast(intent);
 
         super.onDestroy();

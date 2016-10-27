@@ -16,8 +16,11 @@ public class TripBuilder {
 
     private ArrayList<Location> path;
 
-    private FirebaseUser driver;
+    private Driver driver;
     private Car car;
+
+    // not saved to Trip object
+    private double distance; // in meters
 
     private TripBuilder() {
         path = new ArrayList<>();
@@ -27,15 +30,26 @@ public class TripBuilder {
     public static TripBuilder startTrip(FirebaseUser driver, Car car) {
         TripBuilder tripBuilder = new TripBuilder();
 
-        tripBuilder.driver = driver;
+        tripBuilder.driver = new Driver(
+                driver.getDisplayName(),
+                driver.getEmail(),
+                driver.getUid()
+        );
+
         tripBuilder.car = car;
 
         tripBuilder.whenStarted = new Date();
+
+        tripBuilder.distance = 0d;
 
         return tripBuilder;
     }
 
     public TripBuilder addLocation(Location location) {
+        if (path.size() >= 1) {
+            distance += path.get(path.size() - 1).distanceTo(location);
+        }
+
         path.add(location);
 
         return this;
@@ -63,7 +77,8 @@ public class TripBuilder {
                 whenEnded,
                 driver,
                 car,
-                convertLocationsToLatLngs(path)
+                convertLocationsToLatLngs(path),
+                distance
         );
     }
 
@@ -73,5 +88,9 @@ public class TripBuilder {
         firebaseHandler.saveTrip(build());
 
         return this;
+    }
+
+    public double getDistance() {
+        return distance;
     }
 }

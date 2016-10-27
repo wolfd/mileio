@@ -17,7 +17,7 @@ import butterknife.ButterKnife;
 /**
  * Created by DHZ_Bill on 10/20/16.
  */
-public class FragmentFill extends Fragment{
+public class FragmentFill extends Fragment {
     @BindView(R.id.fillListView) ListView fillListView;
     @BindView(R.id.gasCost) TextView gasCost;
     @BindView(R.id.amountFilled) TextView amountFilled;

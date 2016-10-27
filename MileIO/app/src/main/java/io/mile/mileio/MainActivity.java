@@ -34,6 +34,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
+import io.mile.mileio.types.Car;
+
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
@@ -42,6 +44,8 @@ import static io.mile.mileio.TrackingService.TRACKING;
 public class MainActivity extends AppCompatActivity {
     public static final int MAP_NOTIFICATION_ID = 11;
     private static final String TAG = "MainActivity";
+
+    public static final String CAR = "ARG_CAR";
 
     // permission constants
     private final int GRANTED_FINE = 0;
@@ -126,7 +130,14 @@ public class MainActivity extends AppCompatActivity {
     private void startTracking() {
         // start tracking service
         Log.d(TAG, "Starting TrackingService");
-        startService(new Intent(this, TrackingService.class));
+
+        Intent intent = new Intent(this, TrackingService.class);
+
+        // TODO get car from database
+
+        intent.putExtra(CAR, new Car("Subaru"));
+
+        startService(intent);
     }
 
     @Override

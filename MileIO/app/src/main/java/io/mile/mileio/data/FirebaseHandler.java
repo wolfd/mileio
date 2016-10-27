@@ -3,6 +3,9 @@ package io.mile.mileio.data;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import io.mile.mileio.types.Trip;
 
 /**
@@ -17,12 +20,15 @@ public class FirebaseHandler {
     }
 
     public void saveTrip(Trip trip) {
-        // save trip under trips/{uid}/{startTime}
+        // save trip under trips/{uid}/{key}
+
+        String key = mDatabase.child("trips").push().getKey();
+
         DatabaseReference newTripRef = mDatabase
                 .child("trips")
                 .child(trip.getDriver().getUid())
-                .child(String.valueOf(trip.getWhenStarted().getTime()));
+                .child(key);
 
-        newTripRef.setValue(trip);
+        newTripRef.setValue(trip.toMap());
     }
 }
