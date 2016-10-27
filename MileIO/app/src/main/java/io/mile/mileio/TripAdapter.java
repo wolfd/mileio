@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Random;
 
+import io.mile.mileio.types.Trip;
+
 public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
     private static final SimpleDateFormat whenFormat = new SimpleDateFormat("MM/dd/yy", Locale.US);
     private final ArrayList<Trip> trips;
@@ -42,15 +44,17 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
         Trip trip = trips.get(position);
 
         holder.distanceView.setText(
-                String.format(Locale.US, "%.1f miles", trip.getDistance())
+                String.format(Locale.US, "%.1f miles", 0d)
         );
 
-        holder.operatorNameView.setText(
-                trip.getDriver().getDisplayName()
-        );
+        if (trip.getDriver() != null) {
+            holder.operatorNameView.setText(
+                    trip.getDriver().getDisplayName()
+            );
+        }
 
         holder.whenView.setText(
-                whenFormat.format(trip.getWhen())
+                whenFormat.format(trip.getWhenStarted())
         );
 
         // update map
