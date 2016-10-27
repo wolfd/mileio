@@ -32,6 +32,8 @@ public class FragmentFill extends Fragment{
         fillListView.setAdapter(adapter);
         FillOweAmount a = new FillOweAmount("Bill", "200");
         adapter.add(a);
+        gasCost.setText("$100");
+        amountFilled.setText("100");
         return v;
     }
 }
