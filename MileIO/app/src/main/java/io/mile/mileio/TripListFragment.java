@@ -15,6 +15,9 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 import java.util.Date;
 
+import io.mile.mileio.types.Car;
+import io.mile.mileio.types.Trip;
+
 public class TripListFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView tripRecyclerView;
@@ -44,14 +47,7 @@ public class TripListFragment extends Fragment {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        trips.add(new Trip(user, 10, new Date(), new ArrayList<LatLng>()));
-        trips.add(new Trip(user, 5.4, new Date(), new ArrayList<LatLng>()));
-        trips.add(new Trip(user, 25.8, new Date(), new ArrayList<LatLng>()));
-        trips.add(new Trip(user, 25.8, new Date(), new ArrayList<LatLng>()));
-        trips.add(new Trip(user, 25.8, new Date(), new ArrayList<LatLng>()));
-        trips.add(new Trip(user, 25.8, new Date(), new ArrayList<LatLng>()));
-        trips.add(new Trip(user, 25.8, new Date(), new ArrayList<LatLng>()));
-        trips.add(new Trip(user, 25.8, new Date(), new ArrayList<LatLng>()));
+        trips.add(new Trip(new Date(), new Date(), user, new Car("Subaru"), new ArrayList<LatLng>()));
     }
 
     @Override

@@ -53,7 +53,8 @@ public class TripBuilder {
         for (Location location : path) {
             latLngs.add(new LatLng(location.getLatitude(), location.getLongitude()));
         }
-        return null;
+
+        return latLngs;
     }
 
     public Trip build() {
@@ -68,6 +69,8 @@ public class TripBuilder {
 
     public TripBuilder save() {
         FirebaseHandler firebaseHandler = new FirebaseHandler();
+
+        firebaseHandler.saveTrip(build());
 
         return this;
     }

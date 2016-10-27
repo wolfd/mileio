@@ -1,5 +1,13 @@
 package io.mile.mileio.types;
 
 public class Car {
-    private String name;
+    private final String name;
+
+    public Car(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
 }
