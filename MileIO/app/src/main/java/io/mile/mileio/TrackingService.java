@@ -14,7 +14,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import static io.mile.mileio.MainActivity.LOCATION;
+import static io.mile.mileio.EndTripActivity.DISTANCE;
+import static io.mile.mileio.EndTripActivity.LOCATION;
 
 import java.util.ArrayList;
 
@@ -39,7 +40,7 @@ public class TrackingService extends Service {
     private NotificationCompat.Builder mBuilder;
 
     private ArrayList<Location> mTripLocations;
-    private double mDistanceMeters;
+    private float mDistanceMeters;
 
     private class LocationListener implements android.location.LocationListener {
         Location mLastLocation;
@@ -53,23 +54,14 @@ public class TrackingService extends Service {
         public void onLocationChanged(Location location) {
             Log.d(TAG, "onLocationChanged: " + location);
 
-            // broadcast new location to activity
-            Intent intent = new Intent();
-            intent.setAction(TRACKING);
-            intent.putExtra(LOCATION, location);
-            sendBroadcast(intent);
-
             if (mTripLocations.size() >= 1) {
                 mDistanceMeters += location.distanceTo(
                         mTripLocations.get(mTripLocations.size() - 1)
                 );
             }
 
-
-
             mLastLocation.set(location);
             mTripLocations.add(location);
-
 
             updateNotification();
         }
@@ -150,7 +142,6 @@ public class TrackingService extends Service {
         initializeLocationManager();
         initializeNotificationManager();
 
-
         try {
             mLocationManager.requestLocationUpdates(
                     LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
@@ -178,6 +169,14 @@ public class TrackingService extends Service {
     @Override
     public void onDestroy() {
         Log.d(TAG, "onDestroy");
+
+        // send the locations list to EndTripActivity
+        Intent intent = new Intent();
+        intent.setAction(TRACKING);
+        intent.putExtra(LOCATION, mTripLocations);
+        intent.putExtra(DISTANCE, mDistanceMeters * METERS_TO_MILES);
+        sendBroadcast(intent);
+
         super.onDestroy();
         if (mLocationManager != null) {
             for (int i = 0; i < mLocationListeners.length; i++) {
