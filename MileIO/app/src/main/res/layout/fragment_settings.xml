@@ -1,13 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
     <TextView
+        android:id="@+id/car_owner_name"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="TESTING FRAGMENT, DO STUFF HERE" />
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/title_font_size"
+        android:text="@string/car_owner" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/car_add_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/car_owner_name"
+        android:textSize="@dimen/subtitle_font_size"
+        android:text="@string/car_code" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/car_add_code"
+        android:textSize="@dimen/default_font_size"
+        android:text="@string/leave_car" />
+
+</RelativeLayout>

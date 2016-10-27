@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -145,11 +146,10 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            SettingsFragment newFragment = new SettingsFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragment, newFragment, "settingsFragment");
-            transaction.addToBackStack(null);
-            transaction.commit();
+            Intent intent = new Intent(this, SettingsActivity.class);
+            // TODO add intent extra for user
+
+            startActivity(intent);
             return true;
         } else if(id == R.id.action_sign_out) {
             AuthUI.getInstance()

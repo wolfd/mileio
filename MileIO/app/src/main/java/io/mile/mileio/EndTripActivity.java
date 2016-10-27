@@ -8,7 +8,7 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -29,9 +29,16 @@ public class EndTripActivity extends AppCompatActivity {
     private BroadcastReceiver receiver;
     private IntentFilter filter;
 
+    // TODO testing?
+    private TextView textView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_end);
+
+        // TODO testing?
+        textView = (TextView) findViewById(R.id.distance_text);
 
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.cancel(MainActivity.MAP_NOTIFICATION_ID);
@@ -48,8 +55,6 @@ public class EndTripActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 locations = intent.getParcelableArrayListExtra(LOCATION);
                 distance = intent.getFloatExtra(DISTANCE, 0);
-
-                Toast.makeText(context, "distance " + distance, Toast.LENGTH_SHORT);
             }
         };
 
@@ -67,6 +72,7 @@ public class EndTripActivity extends AppCompatActivity {
     // unregister message receiver
     @Override
     protected void onDestroy() {
+        textView.setText("Trip distance: " + distance + " miles");
         if (receiver != null) {
             unregisterReceiver(receiver);
             receiver = null;
