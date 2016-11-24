@@ -39,6 +39,8 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 import static io.mile.mileio.TrackingService.TRACKING;
 
+
+// Good work! Come to me if you want more specific feedback
 public class MainActivity extends AppCompatActivity {
     public static final int MAP_NOTIFICATION_ID = 11;
     private static final String TAG = "MainActivity";
